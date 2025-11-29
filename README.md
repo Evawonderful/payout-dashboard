@@ -4,9 +4,9 @@ A real-time dashboard for monitoring payout transactions, margins, and platform 
 
 ## Prerequisites
 
-- Node.js 14+ 
+- Node.js 20.19+ or 22.12+ (check with `node -v`)
 - npm or yarn
-- Supabase account 
+- Supabase account
 
 ## Quick Start
 
@@ -14,7 +14,7 @@ A real-time dashboard for monitoring payout transactions, margins, and platform 
 
 ```bash
 # Clone the repository
-git clone https://github.com/Evawonderful/payout-dashboard.git
+git clone <your-repo-url>
 cd payout-dashboard
 
 # Install dependencies
@@ -75,19 +75,28 @@ CREATE POLICY "Allow all access" ON payouts FOR ALL USING (true);
 Create `.env` file in project root:
 
 ```bash
-REACT_APP_SUPABASE_URL=https://your-project.supabase.co
-REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
-⚠️ Replace with your actual credentials from Supabase!
+⚠️ **Important:** Vite uses `VITE_` prefix (not `REACT_APP_`)
 
-### 4. Run the App
+### 4. Update Supabase Client
+
+Make sure your component uses Vite environment variables:
+
+```javascript
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+```
+
+### 5. Run the App
 
 ```bash
-npm start
+npm run dev
 ```
 
-Opens at [http://localhost:3000](http://localhost:3000)
+Opens at [http://localhost:5173]
 
 ## Features
 
@@ -97,13 +106,30 @@ Opens at [http://localhost:3000](http://localhost:3000)
 - **Margin Calculation** - Automatic profit and margin % computation
 - **Responsive Design** - Works on desktop and mobile
 
+## Project Structure
+
+```
+payout-dashboard/
+├── src/
+│   ├── components/
+│   │   └── PayoutDashboard.jsx  # Main dashboard component
+│   ├── App.js                    # App entry point
+│   └── index.js
+├── .env                          # Environment variables (create this)
+├── package.json
+└── README.md
+```
 
 ## Troubleshooting
+
+### Issue: "Vite requires Node.js version 20.19+"
+- Upgrade Node: `brew upgrade node` (macOS) or download from [nodejs.org](https://nodejs.org)
+- Or use NVM: `nvm install 20 && nvm use 20`
 
 ### Issue: Blank screen
 - Check browser console (F12) for errors
 - Disable ad blockers or try incognito mode
-- Verify `.env` file exists and has correct credentials
+- Verify `.env` file exists and uses `VITE_` prefix (not `REACT_APP_`)
 
 ### Issue: "Table does not exist"
 - Run the SQL script in Supabase SQL Editor
@@ -113,25 +139,28 @@ Opens at [http://localhost:3000](http://localhost:3000)
 - Check Supabase Table Editor to confirm data imported
 - Check Network tab in browser DevTools for failed requests
 
+### Issue: Environment variables not working
+- Must use `VITE_` prefix
+- Must restart dev server after changing `.env`
+- Access with `import.meta.env.VITE_SUPABASE_URL` (not `process.env`)
+
 ### Issue: Tailwind styles not working
 - Delete `node_modules` and `package-lock.json`
 - Run `npm install` again
-- Restart dev server
+- Restart dev server with `npm run dev`
 
 ## Environment Variables
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `REACT_APP_SUPABASE_URL` | Your Supabase project URL | `https://abc123.supabase.co` |
-| `REACT_APP_SUPABASE_ANON_KEY` | Your Supabase anonymous key | `eyJhbGc...` |
+| `VITE_SUPABASE_URL` | Your Supabase project URL | `https://abc123.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase anonymous key | `eyJhbGc...` |
+
+⚠️ **Note:** Vite requires `VITE_` prefix for environment variables (not `REACT_APP_`)
 
 ## Tech Stack
 
 - **Frontend:** React 18, Tailwind CSS
 - **Backend:** Supabase (PostgreSQL)
 - **Icons:** Lucide React
-- **Build Tool:** Create React App
-
-
-
-# payout-dashboard
+- **Build Tool:** Vite
